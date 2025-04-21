@@ -18,40 +18,35 @@
 - Sufficient permissions to mount shares and create directories (`sudo` access required).
 
 ## Installation and Usage
-
-1. **Create the Configuration File**:
-   Create a file named `/etc/mount_nas_to_plex.conf` with the following content:
+1. Clone the Github Repository
    ```bash
-   # NAS Configuration
-   NAS_IP="192.168.1.100"              # QNAP NAS IP
-   NAS_SHARE="/Media"                  # Shared folder on NAS
-   NAS_USER="your_username"            # Username for NAS authentication
-   NAS_PASS="your_password"            # Password for NAS authentication
-
-   # Local Configuration
-   MOUNT_POINT="/mnt/nas_media"        # Local mount point
-   PLEX_MEDIA_DIR="/path/to/plex/media" # Plex container media directory
+   git clone https://github.com/mateo-cogeanu/MNSP.git
    ```
+   then change directory to MNSP
+   ```bash
+   cd MNSP
+   ```
+
    Set secure permissions for the file:
    ```bash
-   sudo chmod 600 /etc/mount_nas_to_plex.conf
+   sudo chmod 600 config.conf
    ```
 
-2. **Download the Script**:
-   Save the script as `mount_nas_to_plex.sh`.
+3. **Download the Script**:
+   Save the script as `mount.sh`.
 
-3. **Make it Executable**:
+4. **Make it Executable**:
    ```bash
-   chmod +x mount_nas_to_plex.sh
+   chmod +x mount.sh
    ```
 
-4. **Run the Script**:
+5. **Run the Script**:
    Execute the script with root privileges:
    ```bash
-   sudo ./mount_nas_to_plex.sh
+   sudo ./mount.sh
    ```
 
-5. **Verify**:
+6. **Verify**:
    Ensure the NAS share is mounted successfully and Plex can access the media files.
 
 ## Example Configuration
