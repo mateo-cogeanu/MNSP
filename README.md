@@ -56,7 +56,7 @@
 
 ## Example Configuration
 
-#### `/etc/mount_nas_to_plex.conf`
+#### `config.conf`
 ```bash
 # NAS Configuration
 NAS_IP="192.168.1.100"              # QNAP NAS IP
