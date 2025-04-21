@@ -1,12 +1,28 @@
 #!/bin/bash
 
-# Variables - Update these with your own values
-NAS_IP="192.168.1.100"              # IP address of your QNAP NAS
-NAS_SHARE="/Media"                  # Share name on the NAS (e.g., /Media)
-MOUNT_POINT="/mnt/nas_media"        # Local mount point for the NAS share
-PLEX_MEDIA_DIR="/path/to/plex/media" # Directory used by Plex container for media
-NAS_USER="your_username"            # Username for NAS authentication
-NAS_PASS="your_password"            # Password for NAS authentication
+# Configuration file - Update this path if needed
+CONFIG_FILE="/etc/mount_nas_to_plex.conf"
+
+# Check if the configuration file exists
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Configuration file not found at $CONFIG_FILE. Exiting..."
+    exit 1
+fi
+
+# Source the configuration file
+source "$CONFIG_FILE"
+
+# Ensure the credentials file has secure permissions
+if [ ! -f "$CREDENTIALS_FILE" ]; then
+    echo "Credentials file not found at $CREDENTIALS_FILE. Exiting..."
+    exit 1
+fi
+
+if [ "$(stat -c %a "$CREDENTIALS_FILE")" != "600" ]; then
+    echo "Warning: The credentials file should have permissions set to 600 for security."
+    echo "Fixing permissions now..."
+    sudo chmod 600 "$CREDENTIALS_FILE"
+fi
 
 # Check if cifs-utils is installed
 if ! dpkg -l | grep -q cifs-utils; then
@@ -21,9 +37,9 @@ if [ ! -d "$MOUNT_POINT" ]; then
     sudo mkdir -p "$MOUNT_POINT"
 fi
 
-# Mount the NAS share
+# Mount the NAS share using the credentials file
 echo "Mounting NAS share $NAS_SHARE from $NAS_IP to $MOUNT_POINT"
-sudo mount -t cifs -o username="$NAS_USER",password="$NAS_PASS",iocharset=utf8,vers=3.0 "$NAS_IP:$NAS_SHARE" "$MOUNT_POINT"
+sudo mount -t cifs -o credentials="$CREDENTIALS_FILE",iocharset=utf8,vers=3.0 "$NAS_IP:$NAS_SHARE" "$MOUNT_POINT"
 
 # Check if the mount was successful
 if mountpoint -q "$MOUNT_POINT"; then
