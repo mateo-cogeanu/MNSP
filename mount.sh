@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration file - Update this path if needed
-CONFIG_FILE="/etc/mount_nas_to_plex.conf"
+CONFIG_FILE="config.conf"
 
 # Check if the configuration file exists
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -12,16 +12,11 @@ fi
 # Source the configuration file
 source "$CONFIG_FILE"
 
-# Ensure the credentials file has secure permissions
-if [ ! -f "$CREDENTIALS_FILE" ]; then
-    echo "Credentials file not found at $CREDENTIALS_FILE. Exiting..."
-    exit 1
-fi
-
-if [ "$(stat -c %a "$CREDENTIALS_FILE")" != "600" ]; then
-    echo "Warning: The credentials file should have permissions set to 600 for security."
+# Ensure the configuration file has secure permissions
+if [ "$(stat -c %a "$CONFIG_FILE")" != "600" ]; then
+    echo "Warning: The configuration file should have permissions set to 600 for security."
     echo "Fixing permissions now..."
-    sudo chmod 600 "$CREDENTIALS_FILE"
+    sudo chmod 600 "$CONFIG_FILE"
 fi
 
 # Check if cifs-utils is installed
@@ -37,9 +32,9 @@ if [ ! -d "$MOUNT_POINT" ]; then
     sudo mkdir -p "$MOUNT_POINT"
 fi
 
-# Mount the NAS share using the credentials file
+# Mount the NAS share using the credentials from the config file
 echo "Mounting NAS share $NAS_SHARE from $NAS_IP to $MOUNT_POINT"
-sudo mount -t cifs -o credentials="$CREDENTIALS_FILE",iocharset=utf8,vers=3.0 "$NAS_IP:$NAS_SHARE" "$MOUNT_POINT"
+sudo mount -t cifs -o username="$NAS_USER",password="$NAS_PASS",iocharset=utf8,vers=3.0 "$NAS_IP:$NAS_SHARE" "$MOUNT_POINT"
 
 # Check if the mount was successful
 if mountpoint -q "$MOUNT_POINT"; then
